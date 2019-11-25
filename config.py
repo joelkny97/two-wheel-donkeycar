@@ -1,64 +1,50 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
-Created on Wed Sep 13 21:27:44 2017
+CAR CONFIG
 
-@author: wroscoe
+This file is read by your car application's manage.py script to change the car
+performance.
+
+EXMAPLE
+-----------
+import dk
+cfg = dk.load_config(config_path='~/mycar/config.py')
+print(cfg.CAMERA_RESOLUTION)
+
 """
+
+
 import os
-import types
+
+#PATHS
+CAR_PATH = PACKAGE_PATH = os.path.dirname(os.path.realpath(__file__))
+DATA_PATH = os.path.join(CAR_PATH, 'data')
+MODELS_PATH = os.path.join(CAR_PATH, 'models')
+
+#VEHICLE
+DRIVE_LOOP_HZ = 20
+MAX_LOOPS = 100000
+
+#CAMERA
+CAMERA_RESOLUTION = (120, 160) #(height, width)
+CAMERA_FRAMERATE = DRIVE_LOOP_HZ
+
+#STEERING
+STEERING_CHANNEL = 1
+STEERING_LEFT_PWM = 30
+STEERING_RIGHT_PWM = 70
+
+#THROTTLE
+THROTTLE_CHANNEL = 0
+THROTTLE_FORWARD_PWM = 221
+THROTTLE_STOPPED_PWM = 151
+THROTTLE_REVERSE_PWM = 101
+
+#TRAINING
+BATCH_SIZE = 128
+TRAIN_TEST_SPLIT = 0.8
 
 
-class Config:
+TUB_PATH = os.path.join(CAR_PATH, 'tub') # if using a single tub
 
-    def __init__(self):
-        pass
-
-    def from_pyfile(self, filename, silent=False):
-        """
-        Read config class from a file.
-        """
-        d = types.ModuleType('config')
-        d.__file__ = filename
-        try:
-            with open(filename, mode='rb') as config_file:
-                exec(compile(config_file.read(), filename, 'exec'), d.__dict__)
-        except IOError as e:
-            e.strerror = 'Unable to load configuration file (%s)' % e.strerror
-            raise
-        self.from_object(d)
-        return True
-
-    def from_object(self, obj):
-        """
-        Read config class from another object.
-        """
-        for key in dir(obj):
-            if key.isupper():
-                setattr(self, key, getattr(obj, key))
-
-    def __str__(self):
-        """
-        Get a string representation of the config class.
-        """
-        result = []
-        for key in dir(self):
-            if key.isupper():
-                result.append((key, getattr(self,key)))
-        return str(result)
-
-
-def load_config(config_path=None):
-    """
-    Load the config from a file and return the config class.
-    """
-    if config_path is None:
-        import __main__ as main
-        main_path = os.path.dirname(os.path.realpath(main.__file__))
-        config_path = os.path.join(main_path, 'config.py')
-
-    print('loading config file: {}'.format(config_path))
-    cfg = Config()
-    cfg.from_pyfile(config_path)
-    print('config loaded')
-    return cfg
+#ROPE.DONKEYCAR.COM
+ROPE_TOKEN="GET A TOKEN AT ROPE.DONKEYCAR.COM"
